@@ -1,5 +1,6 @@
 import faker from "faker";
 import { useEffect, useState } from "react";
+import Story from "./Story";
 
 const PROFILES_AMOUNT = 20;
 
@@ -16,9 +17,13 @@ function Stories() {
   }, []);
 
   return (
-    <div>
+    <div className="flex space-x-2 p-6 bg-white mt-8 border-gray-200 border rounded-sm overflow-x-scroll">
       {suggestions.map((profile) => (
-        <span key={profile.id}>{profile.username}</span>
+        <Story
+          key={profile.id}
+          img={profile.avatar}
+          username={profile.username}
+        />
       ))}
     </div>
   );
