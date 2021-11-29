@@ -14,8 +14,18 @@ function Header() {
           />
         </div>
 
+        <div className="relative w-10 h-10 lg:hidden flex-shrink-0 cursor-pointer">
+          <Image
+            src="https://marjanvanaubel.com/wp-content/uploads/2019/11/instagram-logo.png"
+            layout="fill"
+            objectFit="contain"
+          />
+        </div>
+
         {/* Center */}
-        <div>center</div>
+        <div>
+          <input type="text" placeholder="Search" />
+        </div>
 
         {/* Right */}
         <div>right</div>
