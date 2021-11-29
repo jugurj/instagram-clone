@@ -44,7 +44,7 @@ function Header() {
         </div>
 
         {/* Right */}
-        <div class="flex items-center justify-end space-x-4">
+        <div className="flex items-center justify-end space-x-4">
           <MenuIcon className="h-6 w-6 md:hidden cursor-pointer" />
 
           <HomeIcon className="navBtn" />
