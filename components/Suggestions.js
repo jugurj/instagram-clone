@@ -39,6 +39,7 @@ function SuggestionsList({ suggestions }) {
     <div>
       {suggestions.map((profile) => (
         <SuggestionsListItem
+          key={profile.id}
           userId={profile.id}
           userImg={profile.avatar}
           username={profile.username}
