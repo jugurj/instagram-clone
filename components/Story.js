@@ -59,4 +59,27 @@ function Story({ img, username }) {
   );
 }
 
+function UserStory({ img }) {
+  return (
+    <div>
+      <div className="relative">
+        <img
+          className="h-14 w-14 p-[2px] rounded-full border-transparent border-2 object-contain cursor-pointer hover:scale-110 transition transform duration-200 ease-out"
+          src={img}
+          alt="User profile image"
+        />
+
+        <span className="absolute bottom-[2px] border-2 border-white right-0 bg-blue-400 w-5 h-5 rounded-full flex justify-center items-center text-white font-semibold pb-[2px] text-md cursor-pointer hover:scale-110 transition transform duration-200 ease-out">
+          +
+        </span>
+      </div>
+
+      <p className="w-14 mt-1 text-[0.625rem] truncate text-center">
+        Your Story
+      </p>
+    </div>
+  );
+}
+
+export { UserStory };
 export default Story;
