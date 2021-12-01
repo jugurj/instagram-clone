@@ -9,8 +9,11 @@ import {
   MenuIcon,
 } from "@heroicons/react/outline";
 import { HomeIcon } from "@heroicons/react/solid";
+import { useSession } from "next-auth/react";
 
 function Header() {
+  const { data: session } = useSession();
+
   return (
     <header className="shadow-sm border-b-1 bg-white sticky top-0 z-50">
       <div className="flex justify-between max-w-6xl mx-5 xl:mx-auto">
@@ -59,7 +62,7 @@ function Header() {
           <HeartIcon className="navBtn" />
 
           <img
-            src="https://i.pinimg.com/474x/65/f4/73/65f473cdf040b4b0fae0610e5de49575.jpg"
+            src={session?.user?.image}
             alt="Profile picture"
             className="h-10 rounded-full cursor-pointer"
           />
