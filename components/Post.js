@@ -15,6 +15,7 @@ function Post({ id, username, userImg, postImg, caption }) {
       <PostImage postImg={postImg} />
       <PostActions />
       <PostCaption username={username} caption={caption} />
+      <PostCommentInput />
     </article>
   );
 }
@@ -57,6 +58,20 @@ function PostCaption({ username, caption }) {
       <span className="font-bold mr-1">{username}</span>
       {caption}
     </p>
+  );
+}
+
+function PostCommentInput() {
+  return (
+    <form className="flex items-center p-4 space-x-4">
+      <EmojiHappyIcon className="postBtn" />
+      <input
+        type="text"
+        placeholder="Add a comment..."
+        className="flex-1 focus:ring-0 outline-none border-t-0 border-l-0 border-r-0 border-b-2 border-gray-300 focus:border-gray-600 transition-colors"
+      />
+      <button className="font-semibold text-blue-400">Post</button>
+    </form>
   );
 }
 
