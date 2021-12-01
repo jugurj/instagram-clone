@@ -9,7 +9,7 @@ import {
   MenuIcon,
 } from "@heroicons/react/outline";
 import { HomeIcon } from "@heroicons/react/solid";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 function Header() {
   const { data: session } = useSession();
@@ -63,6 +63,7 @@ function Header() {
               <HeartIcon className="navBtn" />
 
               <img
+                onClick={() => signOut()}
                 src={session?.user?.image}
                 alt="Profile picture"
                 className="h-10 rounded-full cursor-pointer"
