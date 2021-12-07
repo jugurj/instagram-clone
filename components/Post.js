@@ -87,7 +87,7 @@ function Post({ id, username, userImg, postImg, caption }) {
       <PostHeader username={username} userImg={userImg} />
       <PostImage postImg={postImg} />
       {session && <PostActions hasLiked={hasLiked} likePost={likePost} />}
-      <PostCaption username={username} caption={caption} />
+      <PostCaption likes={likes} username={username} caption={caption} />
       {comments.length > 0 && <PostComments comments={comments} />}
       {session && (
         <PostCommentInput
@@ -140,9 +140,12 @@ function PostActions({ likePost, hasLiked }) {
   );
 }
 
-function PostCaption({ username, caption }) {
+function PostCaption({ username, caption, likes }) {
   return (
     <p className="p-5 truncate">
+      {likes.length > 0 && (
+        <p className="font-bold mb-1">{likes.length} likes</p>
+      )}
       <span className="font-bold mr-1">{username}</span>
       {caption}
     </p>
