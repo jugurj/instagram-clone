@@ -12,10 +12,13 @@ import { useEffect, useState } from "react";
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
 } from "@firebase/firestore";
 import { db } from "../firebase";
 import Moment from "react-moment";
@@ -24,6 +27,8 @@ function Post({ id, username, userImg, postImg, caption }) {
   const { data: session } = useSession();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
+  const [likes, setLikes] = useState([]);
+  const [hasLiked, setHasLiked] = useState();
 
   useEffect(
     () =>
@@ -38,6 +43,30 @@ function Post({ id, username, userImg, postImg, caption }) {
       ),
     [db]
   );
+
+  useEffect(
+    () =>
+      onSnapshot(collection(db, "posts", id, "likes"), (snapshot) => {
+        setLikes(snapshot.docs);
+      }),
+    []
+  );
+
+  useEffect(() => {
+    setHasLiked(
+      likes.findIndex((like) => like.id === session?.user?.uid) !== -1
+    );
+  }, [likes]);
+
+  const likePost = async () => {
+    if (hasLiked) {
+      await deleteDoc(doc(db, "posts", id, "likes", session.user.uid));
+    } else {
+      await setDoc(doc(db, "posts", id, "likes", session.user.uid), {
+        username: session.user.username,
+      });
+    }
+  };
 
   const sendComment = async (e) => {
     e.preventDefault();
@@ -57,7 +86,7 @@ function Post({ id, username, userImg, postImg, caption }) {
     <article className="bg-white my-7 border rounded-sm">
       <PostHeader username={username} userImg={userImg} />
       <PostImage postImg={postImg} />
-      {session && <PostActions />}
+      {session && <PostActions hasLiked={hasLiked} likePost={likePost} />}
       <PostCaption username={username} caption={caption} />
       {comments.length > 0 && <PostComments comments={comments} />}
       {session && (
@@ -89,11 +118,19 @@ function PostImage({ postImg }) {
   return <img src={postImg} alt="" className="object-cover w-full" />;
 }
 
-function PostActions() {
+function PostActions({ likePost, hasLiked }) {
   return (
     <div className="flex justify-between px-4 pt-4">
       <div className="flex space-x-4">
-        <HeartIcon className="postBtn" />
+        {hasLiked ? (
+          <HeartIconFilled
+            onClick={likePost}
+            className="postBtn text-red-500"
+          />
+        ) : (
+          <HeartIcon onClick={likePost} className="postBtn" />
+        )}
+
         <ChatIcon className="postBtn" />
         <PaperAirplaneIcon className="postBtn relative bottom-[3px] rotate-45" />
       </div>
