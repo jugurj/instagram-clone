@@ -8,9 +8,29 @@ import {
 } from "@heroicons/react/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/solid";
 import { useSession } from "next-auth/react";
+import { comment } from "postcss";
+import { useState } from "react";
+import { addDoc, collection, serverTimestamp } from "@firebase/firestore";
+import { db } from "../firebase";
 
 function Post({ id, username, userImg, postImg, caption }) {
   const { data: session } = useSession();
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
+
+  const sendComment = async (e) => {
+    e.preventDefault();
+
+    const commentToSend = comment;
+    setComment("");
+
+    await addDoc(collection(db, "posts", id, "comments"), {
+      comment: commentToSend,
+      username: session.user.username,
+      userImage: session.user.image,
+      timestamp: serverTimestamp(),
+    });
+  };
 
   return (
     <article className="bg-white my-7 border rounded-sm">
@@ -18,7 +38,13 @@ function Post({ id, username, userImg, postImg, caption }) {
       <PostImage postImg={postImg} />
       {session && <PostActions />}
       <PostCaption username={username} caption={caption} />
-      {session && <PostCommentInput />}
+      {session && (
+        <PostCommentInput
+          comment={comment}
+          handleCommentChange={(e) => setComment(e.target.value)}
+          sendComment={sendComment}
+        />
+      )}
     </article>
   );
 }
@@ -64,16 +90,25 @@ function PostCaption({ username, caption }) {
   );
 }
 
-function PostCommentInput() {
+function PostCommentInput({ comment, handleCommentChange, sendComment }) {
   return (
     <form className="flex items-center p-4 space-x-4">
       <EmojiHappyIcon className="postBtn" />
       <input
         type="text"
+        value={comment}
+        onChange={(e) => handleCommentChange(e)}
         placeholder="Add a comment..."
         className="flex-1 focus:ring-0 outline-none border-t-0 border-l-0 border-r-0 border-b-2 border-gray-300 focus:border-gray-600 transition-colors"
       />
-      <button className="font-semibold text-blue-400">Post</button>
+      <button
+        type="submit"
+        disabled={!comment.trim()}
+        onClick={sendComment}
+        className="font-semibold text-blue-400"
+      >
+        Post
+      </button>
     </form>
   );
 }
