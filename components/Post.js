@@ -8,15 +8,36 @@ import {
 } from "@heroicons/react/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/solid";
 import { useSession } from "next-auth/react";
-import { comment } from "postcss";
-import { useState } from "react";
-import { addDoc, collection, serverTimestamp } from "@firebase/firestore";
+import { useEffect, useState } from "react";
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+} from "@firebase/firestore";
 import { db } from "../firebase";
+import Moment from "react-moment";
 
 function Post({ id, username, userImg, postImg, caption }) {
   const { data: session } = useSession();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
+
+  useEffect(
+    () =>
+      onSnapshot(
+        query(
+          collection(db, "posts", id, "comments"),
+          orderBy("timestamp", "desc")
+        ),
+        (snapshot) => {
+          setComments(snapshot.docs);
+        }
+      ),
+    [db]
+  );
 
   const sendComment = async (e) => {
     e.preventDefault();
@@ -38,6 +59,7 @@ function Post({ id, username, userImg, postImg, caption }) {
       <PostImage postImg={postImg} />
       {session && <PostActions />}
       <PostCaption username={username} caption={caption} />
+      {comments.length > 0 && <PostComments comments={comments} />}
       {session && (
         <PostCommentInput
           comment={comment}
@@ -87,6 +109,31 @@ function PostCaption({ username, caption }) {
       <span className="font-bold mr-1">{username}</span>
       {caption}
     </p>
+  );
+}
+
+function PostComments({ comments }) {
+  return (
+    <div className="ml-10 max-h-20 overflow-y-scroll scrollbar-thumb-black scrollbar-thin">
+      {comments.map((comment) => (
+        <div key={comment.id} className="flex items-center space-x-2 mb-3">
+          <img
+            className="h-7 rounded-full"
+            src={comment.data().userImage}
+            alt="User profile image"
+          />
+
+          <p className="text-sm flex-1">
+            <span className="font-bold mr-2">{comment.data().username}</span>
+            {comment.data().comment}
+          </p>
+
+          <Moment fromNow className="pr-5 text-xs text-gray-500">
+            {comment.data().timestamp?.toDate()}
+          </Moment>
+        </div>
+      ))}
+    </div>
   );
 }
 
