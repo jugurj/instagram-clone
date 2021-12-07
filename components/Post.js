@@ -7,15 +7,18 @@ import {
   PaperAirplaneIcon,
 } from "@heroicons/react/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/solid";
+import { useSession } from "next-auth/react";
 
 function Post({ id, username, userImg, postImg, caption }) {
+  const { data: session } = useSession();
+
   return (
     <article className="bg-white my-7 border rounded-sm">
       <PostHeader username={username} userImg={userImg} />
       <PostImage postImg={postImg} />
-      <PostActions />
+      {session && <PostActions />}
       <PostCaption username={username} caption={caption} />
-      <PostCommentInput />
+      {session && <PostCommentInput />}
     </article>
   );
 }
